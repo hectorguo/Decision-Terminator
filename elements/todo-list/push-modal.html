@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/transform-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="bounce-in-animation.html">
 
 <dom-module id="push-modal">
@@ -33,6 +34,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 100%;
         height: 50%;
         background-color: var(--paper-grey-700);
+        background: url(../../images/shake.svg);
+        background-size: 50vh;
+        background-repeat: no-repeat;
     }
 
     paper-material {
@@ -43,13 +47,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         z-index:1;
     }
 
-/*    #top {
+    #top {
         top: 0;
+        background-position: center 25vh;
     }
 
     #bottom {
         bottom: 0;
-    }*/
+        background-position: center -25vh;
+    }
 
     #closeBtn {
         color: white;
@@ -59,9 +65,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <div class="modal-child" id="top" on-tap="hide">
                 <paper-icon-button id="closeBtn" icon="clear" on-tap="hide"></paper-icon-button>
             </div>
-<!--             <paper-material id="content">
+            <paper-material id="content">
                 <content></content>
-            </paper-material> -->
+            </paper-material>
             <div class="modal-child" id="bottom" on-tap="hide"></div>
 
         
@@ -94,6 +100,10 @@ Polymer({
                 timing: {delay: 1000}
               }],
               'exitModal': [{
+                name: 'transform-animation',
+                transformTo: 'scaleY(0)',
+                node: this.$.content
+              }, {
                 name: 'fade-out-animation',
                 node: this.$.closeBtn
               },{
@@ -109,13 +119,12 @@ Polymer({
               }],
               'entryContent':[{
                 name: 'transform-animation',
-                transformTo: 'translateX(100%)',
-                node: this.$.content,
-                timing: {duration: 5000}
+                transformTo: 'scaleY(0)',
+                node: this.$.content
               }, {
                 name: 'bounce-in-animation',
                 node: this.$.content,
-                timing: {delay: 10000}
+                timing: {delay: 1000}
               }],
               'exitContent': {
                 name: 'transform-animation',
@@ -139,7 +148,7 @@ Polymer({
             this.playAnimation('entryModal');
             this.opened = true;
         } else {
-            // this.showContent();
+            this.showContent();
         }
         
     },
@@ -147,11 +156,11 @@ Polymer({
         // this.cancelAnimation();
         this.playAnimation('exitModal');
         this.opened = false;
-        this.fire('modalHide');
+        // this.fire('modalHide');
     },
     showContent: function() {
         // this.contOpened && this.hideContent();
-        this.cancelAnimation();
+        // this.cancelAnimation();
         // this.$.content.style.display = 'block';
         this.playAnimation('entryContent');
         // this.contOpened = true;
@@ -165,9 +174,9 @@ Polymer({
       if (!this.opened) {
         this.style.display = 'none';
       }
-      if(!this.contOpened) {
+      // if(!this.contOpened) {
         // this.$.content.style.display = 'none';
-      }
+      // }
     }
 });
 </script>

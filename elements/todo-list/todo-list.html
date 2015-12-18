@@ -27,34 +27,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     paper-material {
         background-color: #fff;  
     }
-/*
-    div.modal {
-        display: none;
-        left:0;
-        position: fixed;
-        z-index: 1;
-        width: 100%;
-        height: 50%;
-        background-color: var(--paper-grey-700);
-    }*/
-/*
-    #top {
-        top: 0;
-    }
 
-    #bottom {
-        bottom: 0;
+    /deep/ #count {
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      margin-right: 10px;
+      border-radius: 100%;
+      color: white;
+      background-color: #00BCD4;
+      font-size: 1.2rem;
+      padding: 10px;
+      text-align: center;
+      position:relative;
     }
-
-    #closeBtn {
-        color: white;
-    }*/
     </style>
     <template>
-<!--         <div class="modal" id="top" on-tap="hideModal">
-            <paper-icon-button id="closeBtn" icon="clear" on-tap="hideModal"></paper-icon-button>
-        </div>
-        <div class="modal" id="bottom" on-tap="hideModal"></div> -->
         <paper-material>
             <template is="dom-repeat" items="{{data}}">
                 <todo-item option="{{item.option}}" uid="{{item.uid}}" index="{{index}}"></todo-item>
@@ -62,8 +50,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </paper-material>
         <paper-fab icon="icons:add" on-tap="add" class="todo-add"></paper-fab>
         <push-modal id="randomItem">
-<!--             <span class="count">{{_showIndex(focIdx)}}</span>
-            <span>{{_getCurrentItem(focIdx)}}</span> -->
+            <span id="count">{{_showIndex(focIdx)}}</span>
+            <span>{{_getCurrentItem(focIdx)}}</span>
         </push-modal>
     </template>
 </dom-module>
@@ -151,11 +139,11 @@ Polymer({
         return Math.floor(Math.random() * this.data.length);
     },
     showItem: function(index) {
-        this.hideItem();
+        // this.hideItem();
 
         index = index ? index : this.getRandom();
         
-        this.querySelectorAll('todo-item')[index].show();
+        // this.querySelectorAll('todo-item')[index].show();
         this.focIdx = index;
         this.$.randomItem.show();
     },
@@ -163,26 +151,6 @@ Polymer({
         index = index ? index : this.focIdx;
         typeof index === 'number' && this.querySelectorAll('todo-item')[index].hide();
     },
-    // showModal: function(){
-    //     this.isModal = true;
-    //     this.$.top.style.display = 'block';
-    //     this.$.bottom.style.display = 'block';
-    //     this.cancelAnimation();
-    //     this.playAnimation('entry');
-    // },
-    // hideModal: function(){
-    //     this.hideItem();
-    //     this.isModal = false;
-    //     this.cancelAnimation();
-    //     this.playAnimation('exit');
-    // },
-    // _onNeonAnimationFinish: function() {
-    //   if (!this.isModal) {
-    //     this.$.top.style.display = 'none';
-    //     this.$.bottom.style.display = 'none';
-    //   }
-
-    // },
     ready: function(e) {
         var count = 0,
             todoList = this;
@@ -202,9 +170,9 @@ Polymer({
             count++;
         });
 
-        this.$.randomItem.addEventListener('modalHide', function(){
-            todoList.hideItem();
-        });
+        // this.$.randomItem.addEventListener('modalHide', function(){
+        //     todoList.hideItem();
+        // });
     }
 });
 </script>
