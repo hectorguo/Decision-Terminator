@@ -1,0 +1,173 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/transform-animation.html">
+<link rel="import" href="bounce-in-animation.html">
+
+<dom-module id="push-modal">
+    <style>  
+    paper-material {
+        background-color: #fff;  
+    }
+
+    :host {
+        display: none;
+        top:0;
+        left:0;
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        z-index: 101;
+    }
+    .modal-child {
+        width: 100%;
+        height: 50%;
+        background-color: var(--paper-grey-700);
+    }
+
+    paper-material {
+        /*display: none;*/
+        position: absolute;
+        width: 100%;
+        padding:16px 22px;
+        z-index:1;
+    }
+
+/*    #top {
+        top: 0;
+    }
+
+    #bottom {
+        bottom: 0;
+    }*/
+
+    #closeBtn {
+        color: white;
+    }
+    </style>
+    <template>
+            <div class="modal-child" id="top" on-tap="hide">
+                <paper-icon-button id="closeBtn" icon="clear" on-tap="hide"></paper-icon-button>
+            </div>
+<!--             <paper-material id="content">
+                <content></content>
+            </paper-material> -->
+            <div class="modal-child" id="bottom" on-tap="hide"></div>
+
+        
+    </template>
+</dom-module>
+<script>
+Polymer({
+    is: 'push-modal',
+    behaviors: [Polymer.NeonAnimationRunnerBehavior],
+    listeners: {
+      'neon-animation-finish': '_onNeonAnimationFinish'
+    },
+    properties: {
+        animationConfig: {
+          value: function() {
+            return {
+              'entryModal': [{
+                name: 'transform-animation',
+                transformFrom: 'translateY(-100%)',
+                transformTo: 'none',
+                node: this.$.top
+              },{
+                name: 'transform-animation',
+                transformFrom: 'translateY(100%)',
+                transformTo: 'none',
+                node: this.$.bottom
+              },{
+                name: 'bounce-in-animation',
+                node: this.$.content,
+                timing: {delay: 1000}
+              }],
+              'exitModal': [{
+                name: 'fade-out-animation',
+                node: this.$.closeBtn
+              },{
+                name: 'transform-animation',
+                transformTo: 'translateY(-100%)',
+                node: this.$.top,
+                timing: {delay: 1000}
+              },{
+                name: 'transform-animation',
+                transformTo: 'translateY(100%)',
+                node: this.$.bottom,
+                timing: {delay: 1000}
+              }],
+              'entryContent':[{
+                name: 'transform-animation',
+                transformTo: 'translateX(100%)',
+                node: this.$.content,
+                timing: {duration: 5000}
+              }, {
+                name: 'bounce-in-animation',
+                node: this.$.content,
+                timing: {delay: 10000}
+              }],
+              'exitContent': {
+                name: 'transform-animation',
+                transformTo: 'scaleY(0)',
+                node: this.$.content
+              }
+            }
+          }
+        }
+    },
+    prepare: function(){
+        if(this.parentNode.tagName !== 'BODY') {
+            Polymer.dom(document.body).appendChild(this);
+        }
+    },
+    show: function(){
+        this.cancelAnimation();
+        if(!this.opened) {
+            this.prepare();
+            this.style.display = 'block';
+            this.playAnimation('entryModal');
+            this.opened = true;
+        } else {
+            // this.showContent();
+        }
+        
+    },
+    hide: function(){
+        // this.cancelAnimation();
+        this.playAnimation('exitModal');
+        this.opened = false;
+        this.fire('modalHide');
+    },
+    showContent: function() {
+        // this.contOpened && this.hideContent();
+        this.cancelAnimation();
+        // this.$.content.style.display = 'block';
+        this.playAnimation('entryContent');
+        // this.contOpened = true;
+    },
+    hideContent: function() {
+        // this.cancelAnimation();
+        this.playAnimation('exitContent');
+        this.contOpened = false;
+    },
+    _onNeonAnimationFinish: function() {
+      if (!this.opened) {
+        this.style.display = 'none';
+      }
+      if(!this.contOpened) {
+        // this.$.content.style.display = 'none';
+      }
+    }
+});
+</script>

@@ -1,0 +1,210 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="todo-item.html">
+<link rel="import" href="push-modal.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/transform-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+
+<dom-module id="todo-list">
+    <style>
+    paper-fab.todo-add {
+        position: fixed;
+        /*background: #00BCD4;*/
+        bottom: 2vh;
+        right: 2vw;
+    }
+    
+    paper-material {
+        background-color: #fff;  
+    }
+/*
+    div.modal {
+        display: none;
+        left:0;
+        position: fixed;
+        z-index: 1;
+        width: 100%;
+        height: 50%;
+        background-color: var(--paper-grey-700);
+    }*/
+/*
+    #top {
+        top: 0;
+    }
+
+    #bottom {
+        bottom: 0;
+    }
+
+    #closeBtn {
+        color: white;
+    }*/
+    </style>
+    <template>
+<!--         <div class="modal" id="top" on-tap="hideModal">
+            <paper-icon-button id="closeBtn" icon="clear" on-tap="hideModal"></paper-icon-button>
+        </div>
+        <div class="modal" id="bottom" on-tap="hideModal"></div> -->
+        <paper-material>
+            <template is="dom-repeat" items="{{data}}">
+                <todo-item option="{{item.option}}" uid="{{item.uid}}" index="{{index}}"></todo-item>
+            </template>
+        </paper-material>
+        <paper-fab icon="icons:add" on-tap="add" class="todo-add"></paper-fab>
+        <push-modal id="randomItem">
+<!--             <span class="count">{{_showIndex(focIdx)}}</span>
+            <span>{{_getCurrentItem(focIdx)}}</span> -->
+        </push-modal>
+    </template>
+</dom-module>
+<script>
+Polymer({
+    is: 'todo-list',
+    behaviors: [Polymer.NeonAnimationRunnerBehavior],
+    listeners: {
+      'neon-animation-finish': '_onNeonAnimationFinish'
+    },
+    properties: {
+        data: {
+            type: Array,
+            notify: true,
+            value: [{
+                option: 'Go Shopping',
+                uid: 1
+            }, {
+                option: 'Stay at home',
+                uid: 2
+            }]
+        },
+        focIdx: {
+            type: Number
+        },
+        animationConfig: {
+          value: function() {
+            var items =  Polymer.dom(this.root).querySelectorAll('todo-item');
+            var itemsArray = Array.prototype.slice.call(items);
+            return {
+              'entry': [{
+                name: 'transform-animation',
+                transformFrom: 'translateY(-100%)',
+                transformTo: 'none',
+                node: this.$.top
+              },{
+                name: 'transform-animation',
+                transformFrom: 'translateY(100%)',
+                transformTo: 'none',
+                node: this.$.bottom
+              }],
+              'exit': [{
+                name: 'transform-animation',
+                transformTo: 'translateY(-100%)',
+                node: this.$.top,
+                timing: {delay: 500}
+              },{
+                name: 'transform-animation',
+                transformTo: 'translateY(100%)',
+                node: this.$.bottom,
+                timing: {delay: 500}
+              },{
+                name: 'fade-out-animation',
+                node: this.$.closeBtn
+              }]
+            }
+          }
+        }
+    },
+    _showIndex: function(idx) {
+        return idx + 1;
+    },
+    _getCurrentItem: function(idx) {
+        return this.querySelectorAll('todo-item')[idx].option;
+    },
+    add: function() {
+        var uniqueID = Math.floor(Math.random()*10000);
+
+        this.push('data', {
+            uid: uniqueID,
+            option: ''
+        });
+    },
+    del: function(id) {
+        if(!id) {
+            return this.pop('data');
+        } 
+        for (var i = this.data.length - 1; i >= 0; i--) {
+            if(this.data[i].uid == id) {
+                return this.splice('data', i, 1); 
+            }
+        }
+    },
+    getRandom: function(){
+        return Math.floor(Math.random() * this.data.length);
+    },
+    showItem: function(index) {
+        this.hideItem();
+
+        index = index ? index : this.getRandom();
+        
+        this.querySelectorAll('todo-item')[index].show();
+        this.focIdx = index;
+        this.$.randomItem.show();
+    },
+    hideItem: function(index) {
+        index = index ? index : this.focIdx;
+        typeof index === 'number' && this.querySelectorAll('todo-item')[index].hide();
+    },
+    // showModal: function(){
+    //     this.isModal = true;
+    //     this.$.top.style.display = 'block';
+    //     this.$.bottom.style.display = 'block';
+    //     this.cancelAnimation();
+    //     this.playAnimation('entry');
+    // },
+    // hideModal: function(){
+    //     this.hideItem();
+    //     this.isModal = false;
+    //     this.cancelAnimation();
+    //     this.playAnimation('exit');
+    // },
+    // _onNeonAnimationFinish: function() {
+    //   if (!this.isModal) {
+    //     this.$.top.style.display = 'none';
+    //     this.$.bottom.style.display = 'none';
+    //   }
+
+    // },
+    ready: function(e) {
+        var count = 0,
+            todoList = this;
+
+        this.addEventListener('delete', function(e){
+            this.del(e.target.uid);
+        });
+
+        this.addEventListener('shake', function(){
+            setTimeout(function(){
+                count--;
+                if(count === 0) {
+                    // !todoList.isModal && todoList.showModal();
+                    todoList.showItem();
+                }
+            }, 200);
+            count++;
+        });
+
+        this.$.randomItem.addEventListener('modalHide', function(){
+            todoList.hideItem();
+        });
+    }
+});
+</script>

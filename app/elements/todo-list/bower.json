@@ -1,0 +1,21 @@
+{
+  "name": "swipe-list",
+  "authors": [
+    "hectorguo <hectorguo@live.com>"
+  ],
+  "description": "iOS style list, swiping left to remove item.",
+  "main": "swipe-list.html",
+  "moduleType": [],
+  "keywords": [
+    "polymer",
+    "web-components"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "dependencies": {
+    "polymer": "~1.0.2"
+  },
+  "ignore": [
+    "**/.*"
+  ]
+}

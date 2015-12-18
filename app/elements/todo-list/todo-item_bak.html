@@ -1,0 +1,208 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/transform-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="bounce-in-animation.html">
+
+<dom-module id="todo-item">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-wrap);
+      border-bottom: 1px solid #DDD;
+      position: relative;
+    }
+
+    :host.fixed {
+      position: fixed;
+      top: 50%;
+      z-index: 1;
+      width: 100%;
+      left: 0;
+    }
+
+    paper-material {
+      background-color: #fff;
+    }
+    
+    paper-input {
+      /*margin: 0 2vw;*/
+      display: inline-block;
+      /*width: 75%;*/
+      /*@apply(--layout-flex);*/
+
+      --paper-input-container-underline: {
+        background: none;
+      }
+    }
+
+    paper-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position:absolute;
+      right:0;
+      background: var(--paper-red-500);
+      color: white;
+      margin-right:0;
+      margin-left:0;
+      height:100%;
+    }
+    
+
+    .item {
+      padding: 16px 22px;
+      background-color: white;
+      /*width:100%;*/
+      /*@apply(--layout-horizontal);*/
+      @apply(--layout-flex);
+      position:relative;
+    }
+
+    .count {
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      margin-right: 10px;
+      border-radius: 100%;
+      color: white;
+      background-color: #00BCD4;
+      font-size: 1.2rem;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+  <template>
+      <paper-button id="delBtn" on-tap="_delete">Delete</paper-button>
+      <div role="option" id="item" aria-disabled="false" class="item" on-track="_moveItem" on-tap="_resetItem">
+          <span class="count">{{_computeIndex(index)}}</span>
+          <paper-input id="edit" value="{{option}}" placeholder="New Option" on-blur="_edit" no-label-float>
+          </paper-input>
+      </div>
+  </template>
+</dom-module>
+<script>
+Polymer({
+    is: 'todo-item',
+    behaviors: [Polymer.NeonAnimationRunnerBehavior],
+    properties: {
+        option: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+        uid: {
+          type: Number,
+          notify: true
+        },
+        index: {
+          type: Number
+        },
+        editing: {
+            type: Boolean,
+            value: false
+        },
+        fixed: {
+          type: Boolean
+        },
+        animationConfig: {
+          value: function() {
+            return {
+              'entry': {
+                name: 'bounce-in-animation',
+                node: this,
+                timing: {duration: 1000}
+              },
+              'exit': {
+                name: 'transform-animation',
+                transformTo: 'scaleY(0)',
+                node: this
+              }
+            }
+          }
+        }
+    },
+    listeners: {
+      'neon-animation-finish': '_onNeonAnimationFinish'
+    },
+
+    _computeIndex: function(index){
+      return index+1;
+    },
+
+    _edit: function() {
+      this.editing = !this.editing;
+      if (!this.editing) {
+          this.fire('edit', {
+              uid: this.uid,
+              option: this.option
+          });
+      }
+    },
+
+    _delete: function() {
+      this.fire('delete', {uid:this.uid, option:this.option});
+      // this.remove();
+    },
+    
+    _moveItem: function(e,detail) {
+      if(detail.dy !== 0) {
+        Polymer.Gestures.prevent('track');
+        return false;
+      }
+      if(this.$.edit.focused) {
+        return false;
+      }
+      var btnWidth = this.$.delBtn.offsetWidth,
+          maxOffset = -btnWidth * 1.5,
+          actOffset = Math.max(Math.min(detail.dx, 0), maxOffset), // limit offset range 0 ~ maxOffset
+          item = this.$.item;
+
+      if(detail.state !== 'end') {
+        this.translate3d(actOffset+'px', 0, 0, item);
+      } else {
+        // When track end, show Del button or hide.
+        if(actOffset < -btnWidth) {
+          this.translate3d(-btnWidth+'px', 0, 0, item);
+        } else {
+          this._resetItem();
+        }
+      }
+    },
+    _resetItem: function() {
+      this.translate3d(0,0,0, this.$.item);
+    },
+
+    show: function() {
+      this.fixed = true;
+      this.classList.add('fixed');
+      this.cancelAnimation();
+      this.playAnimation('entry');
+    },
+    hide: function() {
+      this.fixed = false;
+      this.cancelAnimation();
+      this.playAnimation('exit');
+    },
+    _onNeonAnimationFinish: function() {
+      if (!this.fixed) {
+        this.classList.remove('fixed');
+      }
+    }
+    
+});
+</script>
