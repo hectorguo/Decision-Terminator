@@ -41,22 +41,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.route = 'home';
     });
 
+    page('/Decision-Terminator/', function() {
+      app.route = 'home';
+    });
+
     page(app.baseUrl, function() {
       app.route = 'home';
     });
 
-    page('/users', function() {
-      app.route = 'users';
-    });
-
-    page('/users/:name', function(data) {
-      app.route = 'user-info';
+    page(app.baseUrl+':name', function(data) {
+      app.route = 'list';
       app.params = data.params;
     });
 
-    page('/contact', function() {
-      app.route = 'contact';
-    });
+    // page('/contact', function() {
+    //   app.route = 'contact';
+    // });
 
     // 404
     page('*', function() {
