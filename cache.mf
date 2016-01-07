@@ -1,0 +1,7 @@
+CACHE MANIFEST
+index.html
+images/shake.svg
+bower_components/webcomponentsjs/webcomponents-lite.min.js
+elements/elements.vulcanized.html
+scripts/app.js
+styles/main.css
