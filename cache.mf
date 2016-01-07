@@ -5,3 +5,7 @@ bower_components/webcomponentsjs/webcomponents-lite.min.js
 elements/elements.vulcanized.html
 scripts/app.js
 styles/main.css
+https://fonts.gstatic.com/s/roboto/v15/oMMgfZMQthOryQo9n22dcuvvDin1pK8aKteLpeZ5c0A.woff2
+https://fonts.gstatic.com/s/roboto/v15/RxZJdnzeo3R5zSexge8UUZBw1xU1rKptJj_0jans920.woff2
+cache-config.json
+https://fonts.gstatic.com/s/roboto/v15/d-6IYplOFocCacKzxwXSOJBw1xU1rKptJj_0jans920.woff2
