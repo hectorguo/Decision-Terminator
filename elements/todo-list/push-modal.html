@@ -14,173 +14,179 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/neon-animation/animations/transform-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="bounce-in-animation.html">
-
 <dom-module id="push-modal">
-    <style>  
-    paper-material {
-        background-color: #fff;  
-    }
-
-    :host {
-        display: none;
-        top:0;
-        left:0;
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        z-index: 101;
-    }
-    .modal-child {
-        width: 100%;
-        height: 50%;
-        background-color: var(--paper-grey-700);
-        background: url(../../images/shake.svg);
-        background-size: 50vh;
-        background-repeat: no-repeat;
-    }
-
-    paper-material {
-        /*display: none;*/
-        position: absolute;
-        width: 100%;
-        padding:16px 22px;
-        z-index:1;
-        top: 45vh;
-    }
-
-    #top {
-        top: 0;
-        background-position: center 25vh;
-    }
-
-    #bottom {
-        bottom: 0;
-        background-position: center -25vh;
-    }
-
-    #closeBtn {
-        color: white;
-    }
-    </style>
-    <template>
-            <div class="modal-child" id="top" on-tap="hide">
-                <paper-icon-button id="closeBtn" icon="clear" on-tap="hide"></paper-icon-button>
-            </div>
-            <paper-material id="content">
-                <content></content>
-            </paper-material>
-            <div class="modal-child" id="bottom" on-tap="hide"></div>
-
-        
-    </template>
+  <style>
+  paper-material {
+    background-color: #fff;
+  }
+  
+  :host {
+    display: none;
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 101;
+  }
+  
+  .modal-child {
+    width: 100%;
+    height: 50%;
+    background-color: var(--paper-grey-700);
+    background: url(../../images/shake.svg);
+    background-size: 50vh;
+    background-repeat: no-repeat;
+  }
+  
+  paper-material {
+    /*display: none;*/
+    position: absolute;
+    width: 100%;
+    padding: 16px 22px;
+    z-index: 1;
+    top: 45vh;
+  }
+  
+  #top {
+    top: 0;
+    background-position: center 25vh;
+  }
+  
+  #bottom {
+    bottom: 0;
+    background-position: center -25vh;
+  }
+  
+  #closeBtn {
+    color: white;
+  }
+  </style>
+  <template>
+    <div class="modal-child" id="top" on-tap="hide">
+      <paper-icon-button id="closeBtn" icon="clear"></paper-icon-button>
+    </div>
+    <paper-material id="content">
+      <content></content>
+    </paper-material>
+    <div class="modal-child" id="bottom" on-tap="hide"></div>
+  </template>
 </dom-module>
 <script>
 Polymer({
-    is: 'push-modal',
-    behaviors: [Polymer.NeonAnimationRunnerBehavior],
-    listeners: {
-      'neon-animation-finish': '_onNeonAnimationFinish'
-    },
-    properties: {
-        animationConfig: {
-          value: function() {
-            return {
-              'entryModal': [{
-                name: 'transform-animation',
-                transformFrom: 'translateY(-100%)',
-                transformTo: 'none',
-                node: this.$.top
-              },{
-                name: 'transform-animation',
-                transformFrom: 'translateY(100%)',
-                transformTo: 'none',
-                node: this.$.bottom
-              },{
-                name: 'bounce-in-animation',
-                node: this.$.content,
-                timing: {delay: 1000}
-              }],
-              'exitModal': [{
-                name: 'transform-animation',
-                transformTo: 'scaleY(0)',
-                node: this.$.content
-              }, {
-                name: 'fade-out-animation',
-                node: this.$.closeBtn
-              },{
-                name: 'transform-animation',
-                transformTo: 'translateY(-100%)',
-                node: this.$.top,
-                timing: {delay: 1000}
-              },{
-                name: 'transform-animation',
-                transformTo: 'translateY(100%)',
-                node: this.$.bottom,
-                timing: {delay: 1000}
-              }],
-              'entryContent':[{
-                name: 'transform-animation',
-                transformTo: 'scaleY(0)',
-                node: this.$.content
-              }, {
-                name: 'bounce-in-animation',
-                node: this.$.content,
-                timing: {delay: 1000}
-              }],
-              'exitContent': {
-                name: 'transform-animation',
-                transformTo: 'scaleY(0)',
-                node: this.$.content
-              }
+  is: 'push-modal',
+  behaviors: [Polymer.NeonAnimationRunnerBehavior],
+  listeners: {
+    'neon-animation-finish': '_onNeonAnimationFinish'
+  },
+  properties: {
+    animationConfig: {
+      value: function() {
+        return {
+          'entryModal': [{
+            name: 'transform-animation',
+            transformFrom: 'translateY(-100%)',
+            transformTo: 'none',
+            node: this.$.top
+          }, {
+            name: 'transform-animation',
+            transformFrom: 'translateY(100%)',
+            transformTo: 'none',
+            node: this.$.bottom
+          }, {
+            name: 'bounce-in-animation',
+            node: this.$.content,
+            timing: {
+              delay: 1000
             }
+          }],
+          'exitModal': [{
+            name: 'transform-animation',
+            transformTo: 'scaleY(0)',
+            node: this.$.content
+          }, {
+            name: 'fade-out-animation',
+            node: this.$.closeBtn
+          }, {
+            name: 'transform-animation',
+            transformTo: 'translateY(-100%)',
+            node: this.$.top,
+            timing: {
+              delay: 1000
+            }
+          }, {
+            name: 'transform-animation',
+            transformTo: 'translateY(100%)',
+            node: this.$.bottom,
+            timing: {
+              delay: 1000
+            }
+          }],
+          'entryContent': [{
+            name: 'transform-animation',
+            transformTo: 'scaleY(0)',
+            node: this.$.content
+          }, {
+            name: 'bounce-in-animation',
+            node: this.$.content,
+            timing: {
+              delay: 1000
+            }
+          }],
+          'exitContent': {
+            name: 'transform-animation',
+            transformTo: 'scaleY(0)',
+            node: this.$.content
           }
         }
-    },
-    prepare: function(){
-        if(this.parentNode.tagName !== 'BODY') {
-            Polymer.dom(document.body).appendChild(this);
-        }
-    },
-    show: function(){
-        this.cancelAnimation();
-        if(!this.opened) {
-            this.prepare();
-            this.style.display = 'block';
-            this.playAnimation('entryModal');
-            this.opened = true;
-        } else {
-            this.showContent();
-        }
-        
-    },
-    hide: function(){
-        // fix close button bubble event
-        if(this.opened) {
-            // this.cancelAnimation();
-            this.playAnimation('exitModal');
-            this.opened = false;
-            // this.fire('modalHide');
-        }
-    },
-    showContent: function() {
-        // this.contOpened && this.hideContent();
-        // this.cancelAnimation();
-        // this.$.content.style.display = 'block';
-        this.playAnimation('entryContent');
-        // this.contOpened = true;
-    },
-    hideContent: function() {
-        // this.cancelAnimation();
-        this.playAnimation('exitContent');
-        this.contOpened = false;
-    },
-    _onNeonAnimationFinish: function() {
-      if (!this.opened) {
-        this.style.display = 'none';
       }
-      // if(!this.contOpened) {
-        // this.$.content.style.display = 'none';
-      // }
     }
+  },
+  prepare: function() {
+    if (this.parentNode.tagName !== 'BODY') {
+      Polymer.dom(document.body).appendChild(this);
+    }
+  },
+  show: function() {
+    this.cancelAnimation();
+    if (!this.opened) {
+      this.prepare();
+      this.style.display = 'block';
+      this.playAnimation('entryModal');
+      this.opened = true;
+    } else {
+      this.showContent();
+    }
+
+  },
+  hide: function() {
+    // fix close button bubble event
+    if (this.opened) {
+      // this.cancelAnimation();
+      this.playAnimation('exitModal');
+      this.opened = false;
+      // this.fire('modalHide');
+    }
+  },
+  showContent: function() {
+    // this.contOpened && this.hideContent();
+    // this.cancelAnimation();
+    // this.$.content.style.display = 'block';
+    this.playAnimation('entryContent');
+    // this.contOpened = true;
+  },
+  hideContent: function() {
+    // this.cancelAnimation();
+    this.playAnimation('exitContent');
+    this.contOpened = false;
+  },
+  _onNeonAnimationFinish: function() {
+    if (!this.opened) {
+      this.style.display = 'none';
+    }
+    // if(!this.contOpened) {
+    // this.$.content.style.display = 'none';
+    // }
+  }
 });
 </script>
