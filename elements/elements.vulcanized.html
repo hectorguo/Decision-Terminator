@@ -20289,10 +20289,13 @@ Polymer({
         
     },
     hide: function(){
-        // this.cancelAnimation();
-        this.playAnimation('exitModal');
-        this.opened = false;
-        // this.fire('modalHide');
+        // fix close button bubble event
+        if(this.opened) {
+            // this.cancelAnimation();
+            this.playAnimation('exitModal');
+            this.opened = false;
+            // this.fire('modalHide');
+        }
     },
     showContent: function() {
         // this.contOpened && this.hideContent();
