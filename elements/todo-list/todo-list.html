@@ -17,7 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="todo-list">
     <style>
-    paper-fab.todo-add {
+    /deep/ paper-fab.todo-add {
         position: fixed;
         /*background: #00BCD4;*/
         bottom: 2vh;
@@ -48,7 +48,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <todo-item option="{{item.option}}" uid="{{item.uid}}" index="{{index}}"></todo-item>
             </template>
         </paper-material>
-        <paper-fab icon="icons:add" on-tap="add" class="todo-add"></paper-fab>
+        <paper-fab id="fabAdd" icon="icons:add" on-tap="add" class="todo-add"></paper-fab>
         <push-modal id="randomItem">
             <span id="count">{{_showIndex(focIdx)}}</span>
             <span>{{_getCurrentItem(focIdx)}}</span>
@@ -173,6 +173,7 @@ Polymer({
             count++;
         });
 
+        Polymer.dom(document.body).appendChild(this.$.fabAdd);
         // this.$.randomItem.addEventListener('modalHide', function(){
         //     todoList.hideItem();
         // });
